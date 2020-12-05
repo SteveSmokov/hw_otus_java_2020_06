@@ -2,6 +2,8 @@ package ru.otus.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.otus.cachehw.HwCache;
 import ru.otus.entities.User;
 import ru.otus.hibernate.sessionmanager.SessionManager;
@@ -11,12 +13,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Service
 public class AdminUserServiceImp implements AdminUserService {
    private static Logger logger = LoggerFactory.getLogger(AdminUserServiceImp.class);
     private final AdminUserDao entityDao;
     private final HwCache<Long, User> cache;
 
-    public AdminUserServiceImp(AdminUserDao adminDao, HwCache<Long, User> cache) {
+    public AdminUserServiceImp(@Autowired AdminUserDao adminDao, @Autowired HwCache<Long, User> cache) {
         this.entityDao = adminDao;
         this.cache = cache;
     }

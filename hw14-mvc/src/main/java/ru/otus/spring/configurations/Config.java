@@ -1,5 +1,6 @@
 package ru.otus.spring.configurations;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.otus.cachehw.HwCache;
@@ -15,24 +16,19 @@ import ru.otus.services.AdminUserServiceImp;
 
 @Configuration
 public class Config {
+    private final String ENTITIES_PATH = "ru.otus.entities";
+
+    @Value("${cache.max.elements.size}")
+    private int maxCacheSize;
+
     @Bean
-    public AdminUserDao getAdminUserDao(){
-        HibernateUtils hibernateUtils = new HibernateUtils("ru.otus.entities");
-        SessionManager sessionManager = new SessionManagerHibernate(hibernateUtils.buildSessionFactory());
-        AdminUserDao userDao = new AdminUserDaoImpl(sessionManager);
-        return userDao;
+    public HibernateUtils getAdminUserDao(){
+        return new HibernateUtils(ENTITIES_PATH);
     }
 
     @Bean
     public HwCache<Long, User> getCacheByUser(){
-        HwCache<Long, User> userHwCache = new MyCache<>(10);
+        HwCache<Long, User> userHwCache = new MyCache<>(maxCacheSize);
         return userHwCache;
     }
-
-    @Bean
-    public AdminUserService getAdminUserService(AdminUserDao adminDao, HwCache<Long, User> cache){
-        AdminUserService adminUserService = new AdminUserServiceImp(adminDao, cache);
-        return adminUserService;
-    }
-
 }
