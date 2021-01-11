@@ -1,0 +1,76 @@
+package ru.otus.diplom.impl;
+
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import ru.otus.diplom.config.Client1DataSourceConfig;
+import ru.otus.diplom.models.ClientFile;
+import ru.otus.diplom.models.Task;
+import ru.otus.diplom.repositories.impl.ClientTaskRepositoryImpl;
+import ru.otus.diplom.services.impl.CipherServiceImpl;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.List;
+
+@Slf4j
+@SpringBootTest(classes = {CipherServiceImpl.class, ClientTaskRepositoryImpl.class, Client1DataSourceConfig.class})
+@DisplayName("Тестирование компонента для работы с клиентской БД")
+@TestPropertySource(locations = {"classpath:application-clients.properties", "classpath:application.properties"})
+class ClientTaskRepositoryImplTest {
+
+    @Autowired
+    private ClientTaskRepositoryImpl clientTaskRepository;
+
+    @Test
+    @DisplayName("Запрос списка заявок с клиентской БД ")
+    void getEISTasks() {
+        List<Task> tasks = clientTaskRepository.getTasks();
+        for (Task task : tasks
+        ) {
+            log.info("Task Id - {}; Title - \"{}\"; Description - \"{}\"", task.getId(), task.getTitle(), task.getText());
+        }
+
+    }
+
+    @Test
+    @DisplayName("Запрос заявки с клиентской БД по Id")
+    void getEISTaskById() {
+        List<ClientFile> tasks = clientTaskRepository.getFileListByTaskID(2L);
+        log.info(String.valueOf(tasks));
+    }
+
+    @Test
+    @DisplayName("Запрос заявки с клиентской БД по Id")
+    void getClientFileById() {
+        ClientFile file = clientTaskRepository.getFileByID(4L);
+        Assertions.assertTrue(((file != null) && (file.getFile_blob() != null)));
+        log.info(String.valueOf(file));
+    }
+
+
+    @Test
+    @DisplayName("")
+    void updateClientTask() {
+        boolean result = clientTaskRepository.updateTask(2L, 4798468L, 1, "Детальное описание, вариант 3");
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("")
+    void updateClientFile() throws FileNotFoundException {
+        File initialFile = new File("D:\\Downloads_history\\mergeStreams_1.pdf");
+        ClientFile clientFile = ClientFile.builder().id(6L)
+                .tsk_id(2L)
+                .file_name("test_pdf")
+                .file_blob(new FileInputStream(initialFile))
+                .build();
+        boolean result = clientTaskRepository.updateClientFile(clientFile);
+        Assertions.assertTrue(result);
+    }
+}
