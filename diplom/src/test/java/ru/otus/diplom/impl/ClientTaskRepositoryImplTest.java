@@ -7,11 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.TestPropertySource;
 import ru.otus.diplom.config.Client1DataSourceConfig;
+import ru.otus.diplom.enums.Departament;
+import ru.otus.diplom.enums.TaskPriority;
 import ru.otus.diplom.models.ClientFile;
 import ru.otus.diplom.models.Task;
 import ru.otus.diplom.properties.Client1DataSourceProp;
@@ -71,7 +71,10 @@ class ClientTaskRepositoryImplTest {
     @Test
     @DisplayName("Редактирование клиентской заявки")
     void updateClientTask() {
-        boolean result = clientTaskRepository.updateTask(2L, 4798468L, 2, "Детальное описание, вариант 3");
+        boolean result = clientTaskRepository.updateTask(1L,
+                Departament.DEVELOPMENT.getValue(),
+                TaskPriority.High.getValue(),
+                "Детальное описание, вариант 3");
         Assertions.assertTrue(result);
     }
 
