@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.otus.diplom.enums.TaskPriority;
 import ru.otus.diplom.models.Task;
 
 import java.text.ParseException;
@@ -234,7 +235,7 @@ class TaskTypeAdapterTest {
     void testGson(){
         Task task = Task.builder()
                 .id(1L)
-                .priority(2)
+                .priority(TaskPriority.High.getValue())
                 .title("Title")
                 .text("Text")
                 .wplan_prs_id(4798481L)

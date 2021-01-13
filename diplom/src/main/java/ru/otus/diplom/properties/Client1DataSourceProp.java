@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @Configuration
-public class Client1DataSourceProperties {
+public class Client1DataSourceProp {
 
     @Value("${spring.client1.datasource.url}")
     private String url;

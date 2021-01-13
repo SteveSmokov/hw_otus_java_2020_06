@@ -4,8 +4,10 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import ru.otus.diplom.enums.Application;
+import ru.otus.diplom.enums.Departament;
+import ru.otus.diplom.enums.TaskPriority;
 import ru.otus.diplom.models.Task;
-import ru.otus.diplom.utils.TaskUtil;
 
 import java.io.IOException;
 
@@ -26,23 +28,23 @@ public void write(JsonWriter out, Task value) throws IOException {
     out.endObject();
     out.name("priority");
     out.beginObject();
-    out.name("id").value(TaskUtil.getIDPriority(value.getPriority()));
+    out.name("id").value(TaskPriority.byValue(value.getPriority()).getJiraValue());
     out.endObject();
-    String val = TaskUtil.getAppID(value.getApl_id());
-    if (val != null) {
+    Application apl = Application.byValue(value.getApl_id());
+    if ((apl != null) && (apl.getJiraValue() != null)) {
         out.name("fixVersions");
         out.beginArray();
         out.beginObject();
-        out.name("id").value(val);
+        out.name("id").value(apl.getJiraValue());
         out.endObject();
         out.endArray();
     }
-    val = TaskUtil.getComponentID(value.getWplan_prs_id());
-    if (val != null) {
+    Departament dep = Departament.byValue(value.getWplan_prs_id());
+    if ((dep != null) && (dep.getJiraValue() != null)) {
         out.name("components");
         out.beginArray();
         out.beginObject();
-        out.name("id").value(val);
+        out.name("id").value(dep.getJiraValue());
         out.endObject();
         out.endArray();
     }
@@ -86,7 +88,7 @@ public void write(JsonWriter out, Task value) throws IOException {
                                 } else in.nextNull();
                                 break;
                             case "priority":
-                                task.setPriority(TaskUtil.getIDPriority(getObjectValue(in,"id")));
+                                task.setPriority(TaskPriority.byJiraValue(getObjectValue(in,"id")).getValue());
                                 break;
                             case "customfield_11101":
                                 if (in.peek() != JsonToken.NULL) {

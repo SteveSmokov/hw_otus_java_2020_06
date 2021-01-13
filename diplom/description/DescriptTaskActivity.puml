@@ -1,0 +1,48 @@
+@startuml
+actor "Пользователь" as user
+actor "Пользователь тех.поддержки" as support
+database "База данных клиента" as db
+participant "Сервис" as service
+database "JIRA" as jira
+user -> support: Обращение
+note left
+Обращение пользователя
+в тех. поддержку по почте
+или по телефону
+end note
+support -> support: Обрабатывает обращение
+support -> db: Создает заявку
+service -> db: Запрашивает список необходимых заявок
+db --> service: Список заявок
+loop Список заявок
+alt Если заявка не зарегистрирована
+service -> jira: Регистрирует заявку
+jira --> service: Ок
+alt Если к заявке прикреплены файлы
+    service -> jira: Добавляем файлы к заявке
+    jira --> service: Ок
+end
+else Если заявrу прислали на доработку
+service -> jira: Вносим изменения в заявку
+note left
+Добавляем комментарий
+с описанием, если необходимо меняем приоритет
+end note
+jira --> service: Ок
+alt Если к заявке прикреплены новые файлы, ранее не были добавлены
+    service -> jira: Добавляем файлы к заявке
+    jira --> service: Ок
+end
+end
+end
+service -> jira: Запрашиваем список заявок в статусе "Pending"
+jira --> service: Список заявок
+loop Список заявок
+    service -> db: Запрашиваем информацию по заявке
+    db --> service: Информация по заявке
+    alt Заявка в статусе "Pending"
+        service -> db: Перенаправляем заявку на тех. поддержку\n дополняя описание значением последнего комментария
+        db --> service: Ok
+    end
+end
+@enduml

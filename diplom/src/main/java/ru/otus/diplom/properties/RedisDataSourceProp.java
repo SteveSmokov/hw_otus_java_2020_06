@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @Configuration
-public class RedisDataSourceProperties {
+public class RedisDataSourceProp {
 
     @Value("${sp.datasource.host}")
     private String host;

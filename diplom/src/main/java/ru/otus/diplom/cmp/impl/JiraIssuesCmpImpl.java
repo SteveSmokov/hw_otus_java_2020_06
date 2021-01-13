@@ -42,7 +42,7 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
     public Task createJIRAIssue(Task task) {
         log.debug("Create Jira issue");
         String taskJson = new Gson().toJson(task);
-        log.info(taskJson);
+        log.debug(taskJson);
         String result = jiraRestClient.createJIRAIssue(taskJson);
         JsonReader jsonReader = Json.createReader(new StringReader(result));
         JsonObject object = jsonReader.readObject();
@@ -65,9 +65,9 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
     public List<Comment> getIssueAllComments(String issue) {
         log.debug("Get all issue comments");
         String result = jiraRestClient.getCommentsToJIRAIssue(issue);
-        log.info(result);
+        log.debug(result);
         String comments = Json.createReader(new StringReader(result)).readObject().get(COMMENTS_FIELD_NAME).toString();
-        log.info(comments);
+        log.debug(comments);
         List<Comment> commentsList = Arrays.asList(gson.fromJson(comments, Comment[].class));
         return commentsList;
     }
@@ -76,7 +76,7 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
     public Comment getIssueLastComment(String issue) {
         log.debug("Get issue last comment");
         String result = jiraRestClient.getCommentsToJIRAIssue(issue);
-        log.info(result);
+        log.debug(result);
         JsonReader jsonReader = Json.createReader(new StringReader(result));
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
@@ -85,7 +85,7 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
         if (lastIndex > - 1) {
             String lCcomment = Json.createReader(new StringReader(result)).readObject()
                     .getJsonArray(COMMENTS_FIELD_NAME).get(lastIndex).toString();
-            log.info(lCcomment);
+            log.debug(lCcomment);
             lastComment = gson.fromJson(lCcomment, Comment.class);
         }
         return  lastComment;
@@ -118,9 +118,9 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
                 .add(JIRA_QUERY_FIELD_NAME, PENDING_ISSUES_QUERY)
                 .build();
         String result = jiraRestClient.searchJiraIssues(findQuery.toString());
-        log.info(result);
+        log.debug(result);
         String tasks = Json.createReader(new StringReader(result)).readObject().get(ISSUES_FIELD_NAME).toString();
-        log.info(tasks);
+        log.debug(tasks);
         List<Task> taskList = Arrays.asList(gson.fromJson(tasks, Task[].class));
         return taskList;
     }
@@ -136,7 +136,7 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
         String taskStr = object.getJsonArray(ISSUES_FIELD_NAME).get(0).toString();
-        log.info("Get task by ID - {}", taskStr);
+        log.debug("Get task by ID - {}", taskStr);
         Task task = gson.fromJson(taskStr, Task.class);
         return task;
     }

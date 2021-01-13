@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.otus.diplom.exceptions.HttpJiraServiceException;
+import ru.otus.diplom.properties.JiraClientProp;
 import ru.otus.diplom.services.CipherService;
 import ru.otus.diplom.services.JiraRestClient;
 
@@ -27,17 +28,16 @@ import java.util.Base64;
 @Service
 public class JiraRestClientImpl implements JiraRestClient {
 
-    private final String JIRA_SEARCH_PREFIX = "/rest/api/2/search";
-    private final String JIRA_ISSUE_PREFIX = "/rest/api/2/issue";
-    private final String JIRA_ISSUE_COMMENT_PREFIX = "/rest/api/2/issue/%s/comment";
-    private final String JIRA_ISSUE_WATCHERS_PREFIX = "/rest/api/2/issue/%s/watchers";
-    private final String JIRA_ISSUE_ATACH_PREFIX = "/rest/api/2/issue/%s/attachments";
-    @Value("${jira.client.url}")
-    private String jiraUrl;
-    @Value("${jira.client.login}")
-    private String jiraLogin;
-    @Value("${jira.client.password}")
-    private String jiraPassword;
+    private final String JIRA_SEARCH_PREFIX = "%s/rest/api/2/search";
+    private final String JIRA_ISSUE_PREFIX = "%s/rest/api/2/issue";
+    private final String JIRA_ISSUE_KEY_PREFIX = "%s/rest/api/2/issue/%s";
+    private final String JIRA_ISSUE_COMMENT_PREFIX = "%s/rest/api/2/issue/%s/comment";
+    private final String JIRA_ISSUE_WATCHERS_PREFIX = "%s/rest/api/2/issue/%s/watchers";
+    private final String JIRA_ISSUE_ATACH_PREFIX = "%s/rest/api/2/issue/%s/attachments";
+
+    @Autowired
+    private JiraClientProp jiraClientProp;
+
     @Autowired
     private CipherService cipherService;
 
@@ -50,7 +50,8 @@ public class JiraRestClientImpl implements JiraRestClient {
     public String createJIRAIssue(String body) {
         log.debug("Create Jira issue");
         try {
-            ResponseEntity<String> result = this.sendRequest(HttpMethod.POST, jiraUrl+JIRA_ISSUE_PREFIX, body);
+            ResponseEntity<String> result = this.sendRequest(HttpMethod.POST,
+                    String.format(JIRA_ISSUE_PREFIX,jiraClientProp.getJiraUrl()), body);
             if ((result.getStatusCode() != HttpStatus.OK) && (result.getStatusCode() != HttpStatus.CREATED))
                 throw new HttpJiraServiceException(result.getStatusCode().toString()+" "+result.getBody());
             return result.getBody();
@@ -70,10 +71,10 @@ public class JiraRestClientImpl implements JiraRestClient {
     @Override
     public boolean addCommentToJIRAIssue(String issue, String body) {
         log.debug("Add comment to issue {}", issue);
-        String fullUrl = jiraUrl+String.format(JIRA_ISSUE_COMMENT_PREFIX, issue);
+        String fullUrl = String.format(JIRA_ISSUE_COMMENT_PREFIX,jiraClientProp.getJiraUrl(), issue);
         try {
             ResponseEntity<String> result = this.sendRequest(HttpMethod.POST, fullUrl, body);
-            log.info(result.getBody());
+            log.debug(result.getBody());
             return ((result.getStatusCode() == HttpStatus.OK) || (result.getStatusCode() == HttpStatus.CREATED));
         } catch (HttpClientErrorException e) {
             log.error("addCommentToJIRAIssue: {}", e);
@@ -85,7 +86,7 @@ public class JiraRestClientImpl implements JiraRestClient {
     public String getCommentsToJIRAIssue(String issue) {
         log.debug("Create Jira issue");
         try {
-            String fullUrl = jiraUrl+String.format(JIRA_ISSUE_COMMENT_PREFIX, issue);
+            String fullUrl = String.format(JIRA_ISSUE_COMMENT_PREFIX, jiraClientProp.getJiraUrl(), issue);
             ResponseEntity<String> result = this.sendRequest(HttpMethod.GET, fullUrl, null);
             if (result.getStatusCode() != HttpStatus.OK)
                 throw new HttpJiraServiceException(result.getStatusCode().toString()+" "+result.getBody());
@@ -106,7 +107,7 @@ public class JiraRestClientImpl implements JiraRestClient {
     @Override
     public boolean addWatchersToJIRAIssue(String issue, String userLogin) {
         log.debug("Add watcher to issue {}", issue);
-        String fullUrl = jiraUrl+String.format(JIRA_ISSUE_WATCHERS_PREFIX, issue);
+        String fullUrl = String.format(JIRA_ISSUE_WATCHERS_PREFIX, jiraClientProp.getJiraUrl(), issue);
         try {
             ResponseEntity<String> result = this.sendRequest(HttpMethod.POST, fullUrl, userLogin);
             if (result.getStatusCode() != HttpStatus.NO_CONTENT)
@@ -121,7 +122,7 @@ public class JiraRestClientImpl implements JiraRestClient {
     @Override
     public boolean updateJIRAIssuePriority(String issue, String priority) {
         log.debug("Update priority to issue {}", issue);
-        String fullUrl = jiraUrl+JIRA_ISSUE_PREFIX+"/"+issue;
+        String fullUrl = String.format(JIRA_ISSUE_KEY_PREFIX, jiraClientProp.getJiraUrl(), issue);
         try {
             ResponseEntity<String> result = this.sendRequest(HttpMethod.PUT, fullUrl, priority);
             if (result.getStatusCode() != HttpStatus.NO_CONTENT)
@@ -142,10 +143,10 @@ public class JiraRestClientImpl implements JiraRestClient {
     @Override
     public boolean addFileToJIRAIssue(String issue, String fileName, byte[] file) {
         log.debug("Atach file to issue {}", issue);
-        String fullUrl = jiraUrl+String.format(JIRA_ISSUE_ATACH_PREFIX, issue);
+        String fullUrl = String.format(JIRA_ISSUE_ATACH_PREFIX, jiraClientProp.getJiraUrl(), issue);
         try {
             String result = this.sendFile(fullUrl, fileName, file);
-            log.info("Response - {}",  result);
+            log.debug("Response - {}",  result);
             return true;
         } catch (HttpClientErrorException e) {
             log.error("addFileToJIRAIssue: {}", e);
@@ -157,7 +158,8 @@ public class JiraRestClientImpl implements JiraRestClient {
     public String searchJiraIssues(String body) {
         log.debug("Search Jira issues");
         try {
-            ResponseEntity<String> result = this.sendRequest(HttpMethod.POST, jiraUrl+JIRA_SEARCH_PREFIX, body);
+            ResponseEntity<String> result = this.sendRequest(HttpMethod.POST,
+                    String.format(JIRA_SEARCH_PREFIX, jiraClientProp.getJiraUrl()), body);
             if (result.getStatusCode() != HttpStatus.OK)
                 throw new HttpJiraServiceException(result.getStatusCode().toString()+" "+result.getBody());
             return result.getBody();
@@ -176,7 +178,7 @@ public class JiraRestClientImpl implements JiraRestClient {
         headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Connection", "keep-alive");
         headers.add("Cache-Control", "no-cache");
-        headers.setBasicAuth(jiraLogin, cipherService.decrypt(jiraPassword));
+        headers.setBasicAuth(jiraClientProp.getJiraLogin(), cipherService.decrypt(jiraClientProp.getJiraPassword()));
         RestTemplate restTemplate;
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setReadTimeout(600000);
@@ -192,7 +194,7 @@ public class JiraRestClientImpl implements JiraRestClient {
         log.debug("Add file - {}", url);
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost request = new HttpPost(url);
-        String basicAuth = jiraLogin + ":" + cipherService.decrypt(jiraPassword);
+        String basicAuth = jiraClientProp.getJiraLogin() + ":" + cipherService.decrypt(jiraClientProp.getJiraPassword());
         request.addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes()));
         request.addHeader("X-Atlassian-Token","nocheck");
         MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

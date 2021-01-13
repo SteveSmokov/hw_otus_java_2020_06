@@ -8,13 +8,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import ru.otus.diplom.models.Task;
 import ru.otus.diplom.models.TaskFile;
-import ru.otus.diplom.properties.RedisDataSourceProperties;
+import ru.otus.diplom.properties.RedisDataSourceProp;
 
 @Configuration
 public class RedisDataSourceConfig {
 
     @Autowired
-    private RedisDataSourceProperties redisDataSourceProperties;
+    private RedisDataSourceProp redisDataSourceProperties;
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {

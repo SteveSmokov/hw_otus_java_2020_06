@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import ru.otus.diplom.enums.Departament;
 import ru.otus.diplom.exceptions.EntetyException;
 import ru.otus.diplom.executor.DBExecutor;
 import ru.otus.diplom.executor.DBExecutorImpl;
@@ -47,12 +48,6 @@ public class ClientTaskRepositoryImpl implements ClientTaskRepository {
     @Qualifier("ClientConnectionPool")
     private DataSource dataSource;
 
-    @Value("${client1.dev.id:0}")
-    private long developer_prs_id;
-    @Value("${client1.sa.id:0}")
-    private long admin_prs_id;
-
-
     @SneakyThrows
     @Override
     public List<Task> getTasks() {
@@ -72,7 +67,8 @@ public class ClientTaskRepositoryImpl implements ClientTaskRepository {
                 }
                 return null;
             };
-            return executer.select(TASKS_LIST_QUERY, function, developer_prs_id, admin_prs_id);
+            return executer.select(TASKS_LIST_QUERY, function, Departament.DEVELOPMENT.getValue(),
+                    Departament.ADMINISTRATION.getValue());
         }
     }
 

@@ -3,11 +3,10 @@ package ru.otus.diplom.config;
 import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import ru.otus.diplom.properties.Client1DataSourceProperties;
+import ru.otus.diplom.properties.Client1DataSourceProp;
 import ru.otus.diplom.services.CipherService;
 
 import javax.sql.DataSource;
@@ -19,7 +18,7 @@ public class Client1DataSourceConfig {
     private CipherService cipherService;
 
     @Autowired
-    private Client1DataSourceProperties client1DataSourceProperties;
+    private Client1DataSourceProp client1DataSourceProperties;
 
     @Bean(name = "ClientConnectionPool")
     @Primary

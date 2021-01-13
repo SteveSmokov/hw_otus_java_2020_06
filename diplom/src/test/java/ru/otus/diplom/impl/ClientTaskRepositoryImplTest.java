@@ -5,24 +5,38 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.TestPropertySource;
 import ru.otus.diplom.config.Client1DataSourceConfig;
 import ru.otus.diplom.models.ClientFile;
 import ru.otus.diplom.models.Task;
+import ru.otus.diplom.properties.Client1DataSourceProp;
 import ru.otus.diplom.repositories.impl.ClientTaskRepositoryImpl;
 import ru.otus.diplom.services.impl.CipherServiceImpl;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
 @Slf4j
-@SpringBootTest(classes = {CipherServiceImpl.class, ClientTaskRepositoryImpl.class, Client1DataSourceConfig.class})
+@SpringBootTest(classes = {Client1DataSourceProp.class, CipherServiceImpl.class, ClientTaskRepositoryImpl.class, Client1DataSourceConfig.class})
+//@EnableConfigurationProperties(Client1DataSourceProp.class)
+@PropertySource("classpath:application.properties")
 @DisplayName("Тестирование компонента для работы с клиентской БД")
-@TestPropertySource(locations = {"classpath:application-clients.properties", "classpath:application.properties"})
+//@TestPropertySource(locations = { "classpath:application.properties"})
 class ClientTaskRepositoryImplTest {
+
+    @Autowired
+    private Client1DataSourceProp client1DataSourceProperties;
+
+    @Autowired
+    @Qualifier("ClientConnectionPool")
+    private DataSource dataSource;
 
     @Autowired
     private ClientTaskRepositoryImpl clientTaskRepository;
@@ -57,7 +71,7 @@ class ClientTaskRepositoryImplTest {
     @Test
     @DisplayName("")
     void updateClientTask() {
-        boolean result = clientTaskRepository.updateTask(2L, 4798468L, 1, "Детальное описание, вариант 3");
+        boolean result = clientTaskRepository.updateTask(2L, 4798468L, 2, "Детальное описание, вариант 3");
         Assertions.assertTrue(result);
     }
 
