@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import ru.otus.diplom.properties.Client1DataSourceProperties;
 import ru.otus.diplom.services.CipherService;
 
 import javax.sql.DataSource;
@@ -17,20 +18,8 @@ public class Client1DataSourceConfig {
     @Autowired
     private CipherService cipherService;
 
-    @Value("${spring.client1.datasource.url}")
-    private String url;
-    @Value("${spring.client1.datasource.username}")
-    private String username;
-    @Value("${spring.client1.datasource.password}")
-    private String password;
-    @Value("${spring.client1.datasource.minPoolSize:1}")
-    private String minPoolSize;
-
-    @Value("${spring.client1.datasource.maxPoolSize:10}")
-    private String maxPoolSize;
-
-    @Value("${spring.client1.datasource.driver-class-name:oracle.jdbc.pool.OracleDataSource}")
-    private String driverClassName;
+    @Autowired
+    private Client1DataSourceProperties client1DataSourceProperties;
 
     @Bean(name = "ClientConnectionPool")
     @Primary
@@ -39,14 +28,13 @@ public class Client1DataSourceConfig {
         try {
             pds = PoolDataSourceFactory.getPoolDataSource();
 
-            pds.setConnectionFactoryClassName(driverClassName);
-            pds.setURL(url);
-            pds.setUser(username);
-            pds.setPassword(cipherService.decrypt(password));
-            pds.setMinPoolSize(Integer.valueOf(minPoolSize));
+            pds.setConnectionFactoryClassName(client1DataSourceProperties.getDriverClassName());
+            pds.setURL(client1DataSourceProperties.getUrl());
+            pds.setUser(client1DataSourceProperties.getUsername());
+            pds.setPassword(cipherService.decrypt(client1DataSourceProperties.getPassword()));
+            pds.setMinPoolSize(client1DataSourceProperties.getMinPoolSize());
             pds.setInitialPoolSize(10);
-            pds.setMaxPoolSize(Integer.valueOf(maxPoolSize));
-
+            pds.setMaxPoolSize(client1DataSourceProperties.getMaxPoolSize());
         } catch (SQLException ea) {
             System.err.println("Error connecting to the database: " + ea.getMessage());
         }

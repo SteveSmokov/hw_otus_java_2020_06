@@ -1,13 +1,12 @@
 plugins {
     id 'org.springframework.boot' version '2.4.1'
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
 }
 
 group = 'ru.otus'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = JavaVersion.VERSION_14
-targetCompatibility = JavaVersion.VERSION_14
+sourceCompatibility = JavaVersion.VERSION_13
+targetCompatibility = JavaVersion.VERSION_13
 
 configurations {
     compileOnly {
@@ -23,8 +22,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'redis.clients:jedis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.4.1'
+    implementation 'redis.clients:jedis:3.4.1'
     implementation 'com.oracle.database.jdbc:ojdbc8:19.6.0.0'
     implementation 'com.oracle.database.jdbc:ucp:19.6.0.0'
     implementation 'com.google.code.gson:gson'
@@ -37,6 +36,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -49,3 +49,6 @@ test {
 test {
     useJUnitPlatform()
 }
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'

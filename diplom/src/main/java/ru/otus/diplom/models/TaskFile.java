@@ -1,6 +1,8 @@
 package ru.otus.diplom.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -9,8 +11,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Getter
-@Setter
 @RedisHash("TaskFiles")
 public class TaskFile implements Serializable {
     @Id

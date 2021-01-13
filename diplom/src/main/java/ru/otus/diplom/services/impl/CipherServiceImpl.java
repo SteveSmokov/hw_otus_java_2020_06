@@ -21,7 +21,7 @@ import java.util.Base64;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 @RequiredArgsConstructor
 public class CipherServiceImpl implements CipherService {
-  private final String DECRYPT_KEY = "dGVzdF9rZXk=";//зашифрованный ключ в формате base64
+  private final String DECRYPT_KEY = System.getenv("DIPLOM_DECRYPT_KEY");//зашифрованный ключ в формате base64
   private Cipher cipher;
 
   @Override

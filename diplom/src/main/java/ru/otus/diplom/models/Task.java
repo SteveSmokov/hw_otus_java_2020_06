@@ -1,7 +1,10 @@
 package ru.otus.diplom.models;
 
 import com.google.gson.annotations.JsonAdapter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import ru.otus.diplom.adapters.TaskTypeAdapter;
@@ -14,8 +17,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
-@Getter
-@Setter
 @RedisHash("Task")
 @JsonAdapter(TaskTypeAdapter.class)
 public class Task implements Serializable {

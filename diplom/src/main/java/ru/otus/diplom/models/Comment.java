@@ -1,7 +1,10 @@
 package ru.otus.diplom.models;
 
 import com.google.gson.annotations.JsonAdapter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.otus.diplom.adapters.CommentTypeAdapter;
 
 import java.io.Serializable;
@@ -11,8 +14,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
-@Getter
-@Setter
 @JsonAdapter(CommentTypeAdapter.class)
 public class Comment implements Serializable {
     private Long id;

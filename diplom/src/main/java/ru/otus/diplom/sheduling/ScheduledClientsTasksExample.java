@@ -59,7 +59,7 @@ public class ScheduledClientsTasksExample {
                         List<ClientFile> clientFiles = clientTaskRepository.getFileListByTaskID(savedTask.getId());
                         for (ClientFile file : clientFiles
                         ) {
-                            TaskFile taskFile = taskRepository.getTaskFileById(file.getTsk_id(), file.getId());
+                            TaskFile taskFile = taskRepository.getTaskFileById(file.getId());
                             if (taskFile != null) {
                                 if (!taskFile.isRegistered()) {
                                     try {
@@ -114,7 +114,7 @@ public class ScheduledClientsTasksExample {
         log.info("Start check our Jira issues - " + System.currentTimeMillis() / 1000);
         List<Task> issues = jiraIssuesCmp.searchJiraIssuesInPending();
         for (Task task: issues
-             ) {
+        ) {
             Task savedTask = taskRepository.getTaskById(task.getId());
             if ((savedTask != null) && (!savedTask.getWplan_prs_id().equals(client_support_id))){
                 Comment response = jiraIssuesCmp.getIssueLastComment(savedTask.getJtask_name());

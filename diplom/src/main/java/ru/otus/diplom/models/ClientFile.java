@@ -1,6 +1,9 @@
 package ru.otus.diplom.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.otus.diplom.annotations.Column;
 
 import java.io.InputStream;
@@ -9,8 +12,6 @@ import java.io.InputStream;
 @NoArgsConstructor
 @Data
 @Builder
-@Getter
-@Setter
 public class ClientFile {
     @Column
     private long id;

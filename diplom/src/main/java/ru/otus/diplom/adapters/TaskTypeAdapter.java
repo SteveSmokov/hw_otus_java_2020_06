@@ -9,54 +9,53 @@ import ru.otus.diplom.utils.TaskUtil;
 
 import java.io.IOException;
 
-public class TaskTypeAdapter extends TypeAdapter<Task> {
-    @Override
-    public void write(JsonWriter out, Task value) throws IOException {
+public class TaskTypeAdapter extends TypeAdapter<Task> {@Override
+public void write(JsonWriter out, Task value) throws IOException {
+    out.beginObject();
+    out.name("fields");
+    out.beginObject();
+    out.name("project");
+    out.beginObject();
+    out.name("key").value(value.getProjectKey());
+    out.endObject();
+    out.name("summary").value(value.getTitle());
+    out.name("description").value(value.getText());
+    out.name("issuetype");
+    out.beginObject();
+    out.name("id").value(value.getIssueType());
+    out.endObject();
+    out.name("priority");
+    out.beginObject();
+    out.name("id").value(TaskUtil.getIDPriority(value.getPriority()));
+    out.endObject();
+    String val = TaskUtil.getAppID(value.getApl_id());
+    if (val != null) {
+        out.name("fixVersions");
+        out.beginArray();
         out.beginObject();
-        out.name("fields");
-        out.beginObject();
-        out.name("project");
-        out.beginObject();
-        out.name("key").value(value.getProjectKey());
+        out.name("id").value(val);
         out.endObject();
-        out.name("summary").value(value.getTitle());
-        out.name("description").value(value.getText());
-        out.name("issuetype");
-        out.beginObject();
-        out.name("id").value(value.getIssueType());
-        out.endObject();
-        out.name("priority");
-        out.beginObject();
-        out.name("id").value(TaskUtil.getIDPriority(value.getPriority()));
-        out.endObject();
-        String val = TaskUtil.getAppID(value.getApl_id());
-        if (val != null) {
-            out.name("fixVersions");
-            out.beginArray();
-            out.beginObject();
-            out.name("id").value(val);
-            out.endObject();
-            out.endArray();
-        }
-        val = TaskUtil.getComponentID(value.getWplan_prs_id());
-        if (val != null) {
-            out.name("components");
-            out.beginArray();
-            out.beginObject();
-            out.name("id").value(val);
-            out.endObject();
-            out.endArray();
-        }
-        out.name("customfield_11101").value(String.valueOf(value.getId()));
-        out.name("customfield_11400").value(value.getPrs_name());
-        out.name("customfield_11201");
-        out.beginObject();
-        out.name("id").value(value.getRegType());
-        out.endObject();
-        out.endObject();
-        out.endObject();
-        out.close();
+        out.endArray();
     }
+    val = TaskUtil.getComponentID(value.getWplan_prs_id());
+    if (val != null) {
+        out.name("components");
+        out.beginArray();
+        out.beginObject();
+        out.name("id").value(val);
+        out.endObject();
+        out.endArray();
+    }
+    out.name("customfield_11101").value(String.valueOf(value.getId()));
+    out.name("customfield_11400").value(value.getPrs_name());
+    out.name("customfield_11201");
+    out.beginObject();
+    out.name("id").value(value.getRegType());
+    out.endObject();
+    out.endObject();
+    out.endObject();
+    out.close();
+}
 
     @Override
     public Task read(JsonReader in) throws IOException {
@@ -89,24 +88,6 @@ public class TaskTypeAdapter extends TypeAdapter<Task> {
                             case "priority":
                                 task.setPriority(TaskUtil.getIDPriority(getObjectValue(in,"id")));
                                 break;
-//                            case "fixVersions":
-//                                in.beginArray();
-//                                while (in.hasNext()) {
-//                                    if (in.peek() != JsonToken.BEGIN_OBJECT) {
-//                                        in.beginObject();
-//                                        task.setApl_id(TaskUtil.getAppID(getObjectValue(in, "id")));
-//                                        in.endObject();
-//                                        break;
-//                                    } else in.skipValue();
-//                                    break;
-//                                }
-//                                in.endArray();
-//                                break;
-//                            case "components":
-////                                task.setPrsID(TaskUtil.getPrsID(getObjectValue(in,"id")));
-////                                in.beginObject();
-////                                task.setPriority(TaskUtil.getIDPriority(in.nextString()));
-////                                in.endObject();
                             case "customfield_11101":
                                 if (in.peek() != JsonToken.NULL) {
                                     task.setId(Long.valueOf(in.nextString()));

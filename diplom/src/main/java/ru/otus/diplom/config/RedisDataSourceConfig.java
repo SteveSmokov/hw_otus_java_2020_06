@@ -1,6 +1,6 @@
 package ru.otus.diplom.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -8,30 +8,23 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import ru.otus.diplom.models.Task;
 import ru.otus.diplom.models.TaskFile;
+import ru.otus.diplom.properties.RedisDataSourceProperties;
 
 @Configuration
 public class RedisDataSourceConfig {
 
-    @Value("${sp.datasource.host}")
-    private String host;
-    @Value("${sp.datasource.port}")
-    private int port;
-    @Value("${sp.datasource.index:0}")
-    private int dbIndex;
-    @Value("${sp.datasource.timeout:60000}")
-    private int dbTimeOt;
-    @Value("${sp.datasource.password:}")
-    private String dbPassword;
+    @Autowired
+    private RedisDataSourceProperties redisDataSourceProperties;
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory();
-        connectionFactory.setPort(port);
-        connectionFactory.setHostName(host);
-        connectionFactory.setDatabase(dbIndex);
-        connectionFactory.setTimeout(dbTimeOt);
-        if (!dbPassword.isEmpty())
-            connectionFactory.setPassword(dbPassword);
+        connectionFactory.setPort(redisDataSourceProperties.getPort());
+        connectionFactory.setHostName(redisDataSourceProperties.getHost());
+        connectionFactory.setDatabase(redisDataSourceProperties.getDbIndex());
+        connectionFactory.setTimeout(redisDataSourceProperties.getDbTimeOut());
+        if (!redisDataSourceProperties.getDbPassword().isEmpty())
+            connectionFactory.setPassword(redisDataSourceProperties.getDbPassword());
         return connectionFactory;
     }
 
