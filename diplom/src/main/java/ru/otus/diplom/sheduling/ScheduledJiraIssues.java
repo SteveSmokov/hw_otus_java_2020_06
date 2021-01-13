@@ -45,7 +45,7 @@ public class ScheduledJiraIssues {
     }
 
     private void respondToSupport(Task savedTask) {
-        Comment comment = jiraIssuesCmp.getIssueLastComment(savedTask.getJtask_name());
+        Comment comment = jiraIssuesCmp.getIssueLastComment(savedTask.getJTaskName());
         if ((comment != null) && (comment.getAuthor_name() != null) &&
                 (comment.getText() != null)) {
             String taskText = savedTask.getText();

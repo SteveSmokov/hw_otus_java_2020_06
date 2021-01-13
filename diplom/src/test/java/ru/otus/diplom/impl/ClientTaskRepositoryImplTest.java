@@ -2,6 +2,7 @@ package ru.otus.diplom.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,9 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest(classes = {Client1DataSourceProp.class, CipherServiceImpl.class, ClientTaskRepositoryImpl.class, Client1DataSourceConfig.class})
-//@EnableConfigurationProperties(Client1DataSourceProp.class)
 @PropertySource("classpath:application.properties")
 @DisplayName("Тестирование компонента для работы с клиентской БД")
-//@TestPropertySource(locations = { "classpath:application.properties"})
+@Disabled
 class ClientTaskRepositoryImplTest {
 
     @Autowired
@@ -49,7 +49,7 @@ class ClientTaskRepositoryImplTest {
         ) {
             log.info("Task Id - {}; Title - \"{}\"; Description - \"{}\"", task.getId(), task.getTitle(), task.getText());
         }
-
+        Assertions.assertTrue(tasks != null);
     }
 
     @Test
@@ -69,14 +69,14 @@ class ClientTaskRepositoryImplTest {
 
 
     @Test
-    @DisplayName("")
+    @DisplayName("Редактирование клиентской заявки")
     void updateClientTask() {
         boolean result = clientTaskRepository.updateTask(2L, 4798468L, 2, "Детальное описание, вариант 3");
         Assertions.assertTrue(result);
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Загрузка файла в клиентскую БД")
     void updateClientFile() throws FileNotFoundException {
         File initialFile = new File("D:\\Downloads_history\\mergeStreams_1.pdf");
         ClientFile clientFile = ClientFile.builder().id(6L)

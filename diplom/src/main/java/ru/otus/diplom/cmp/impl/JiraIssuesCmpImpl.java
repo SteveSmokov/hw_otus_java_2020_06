@@ -47,9 +47,9 @@ public class JiraIssuesCmpImpl implements JiraIssuesCmp {
         JsonReader jsonReader = Json.createReader(new StringReader(result));
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
-        task.setJtask_id(object.getString(ID_FIELD_NAME));
-        task.setJtask_name(object.getString(KEY_FIELD_NAME));
-        task.setJedit_date(new Date());
+        task.setJTaskId(object.getString(ID_FIELD_NAME));
+        task.setJTaskName(object.getString(KEY_FIELD_NAME));
+        task.setJEditDate(new Date());
         return task;
     }
 

@@ -18,13 +18,13 @@ public void write(JsonWriter out, Task value) throws IOException {
     out.beginObject();
     out.name("project");
     out.beginObject();
-    out.name("key").value(value.getProjectKey());
+    out.name("key").value(value.getPROJECT_KEY());
     out.endObject();
     out.name("summary").value(value.getTitle());
     out.name("description").value(value.getText());
     out.name("issuetype");
     out.beginObject();
-    out.name("id").value(value.getIssueType());
+    out.name("id").value(value.getISSUE_TYPE_ID());
     out.endObject();
     out.name("priority");
     out.beginObject();
@@ -52,7 +52,7 @@ public void write(JsonWriter out, Task value) throws IOException {
     out.name("customfield_11400").value(value.getPrs_name());
     out.name("customfield_11201");
     out.beginObject();
-    out.name("id").value(value.getRegType());
+    out.name("id").value(value.getREGISTER_TYPE_ID());
     out.endObject();
     out.endObject();
     out.endObject();
@@ -67,12 +67,10 @@ public void write(JsonWriter out, Task value) throws IOException {
             String firstName = in.nextName();
             switch (firstName) {
                 case "id":
-                    String value = in.nextString();
-                    task.setJtask_id(value);
+                    task.setJTaskId(in.nextString());
                     break;
                 case "key":
-                    value = in.nextString();
-                    task.setJtask_name(value);
+                    task.setJTaskName(in.nextString());
                     break;
                 case "fields":
                     in.beginObject();

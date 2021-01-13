@@ -3,6 +3,7 @@ package ru.otus.diplom.adapters;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.diplom.enums.TaskPriority;
 import ru.otus.diplom.models.Task;
@@ -12,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
+@DisplayName("Тестирование адаптера конвертирования заявки в JSON и обратно")
 class TaskTypeAdapterTest {
     private final Gson gson = new Gson();
 
@@ -232,6 +234,7 @@ class TaskTypeAdapterTest {
             "        }";
 
     @Test
+    @DisplayName("Тестирование компонента для работы с Jira")
     void testGson(){
         Task task = Task.builder()
                 .id(1L)
@@ -241,9 +244,9 @@ class TaskTypeAdapterTest {
                 .wplan_prs_id(4798481L)
                 .prev_start_task(new Date())
                 .p_time_start(new Date())
-                .jtask_id("1")
-                .jtask_name("OFAMPU-1")
-                .jedit_date(new Date())
+                .jTaskId("1")
+                .jTaskName("OFAMPU-1")
+                .jEditDate(new Date())
                 .apl_id(1L)
                 .apl_name("Test application name")
                 .prs_name("Test personal")
@@ -254,17 +257,20 @@ class TaskTypeAdapterTest {
     }
 
     @Test
+    @DisplayName("Тестирование компонента для работы с Jira")
     void testJsonToTask(){
         Task task = gson.fromJson(jiraJson, Task.class);
         log.info(String.valueOf(task));
+
     }
 
     @Test
+    @DisplayName("Тестирование конвертирования значения даты заявки Jira")
     void testformatDateTime() throws ParseException {
         String dateString = "2021-01-10T08:48:32.006+0200";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSzzzz");
         Date date = sdf.parse(dateString);
         log.info("Date - {}", date.toString());
+        Assertions.assertNotNull(date);
     }
-
 }

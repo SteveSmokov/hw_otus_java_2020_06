@@ -20,14 +20,14 @@ import java.util.Date;
 @RedisHash("Task")
 @JsonAdapter(TaskTypeAdapter.class)
 public class Task implements Serializable {
-    private final String projectKey = "OFAMPU";
-    private final String issueType = "10002";
-    private final String regType = "10404";
+    private final String PROJECT_KEY = "OFAMPU";
+    private final String ISSUE_TYPE_ID = "10002";
+    private final String REGISTER_TYPE_ID = "10404";
     @Id
     @Column
     private Long id;
-    private String jtask_id;
-    private String jtask_name;
+    private String jTaskId;
+    private String jTaskName;
     @Column
     private Integer priority;
     @Column
@@ -50,5 +50,5 @@ public class Task implements Serializable {
     private Date p_time_start;
     @Column
     private Integer exist_tf;
-    private Date jedit_date;
+    private Date jEditDate;
 }

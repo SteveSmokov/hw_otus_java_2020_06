@@ -40,7 +40,7 @@ public class ScheduledClientsTasks {
         for (Task task : tasks
         ) {
             Task savedTask = taskRepository.getTaskById(Long.valueOf(task.getId()));
-            if ((savedTask != null) && (savedTask.getJtask_name() != null) && (!savedTask.getJtask_name().isEmpty())) {
+            if ((savedTask != null) && (savedTask.getJTaskName() != null) && (!savedTask.getJTaskName().isEmpty())) {
                 checkRegisteredTask(task, savedTask);
             } else {
                 newTaskRegister(task);
@@ -61,7 +61,7 @@ public class ScheduledClientsTasks {
             ) {
                 TaskFile taskFile = new TaskFile(file.getId(), file.getTsk_id(), file.getFile_name(), false);
                 try {
-                    registerTaskFile(task.getJtask_name(), taskFile, file.getFile_blob().readAllBytes());
+                    registerTaskFile(task.getJTaskName(), taskFile, file.getFile_blob().readAllBytes());
                 } catch (IOException e) {
                     log.error("newTaskRegister - "+e.getMessage(), e);
                 }
@@ -78,19 +78,19 @@ public class ScheduledClientsTasks {
         if (task.getP_time_start().after(savedTask.getP_time_start())) {
             if (!task.getText().equals(savedTask.getText())) {
                 savedTask.setText(task.getText());
-                if (jiraIssuesCmp.addCommentToJIRAIssue(savedTask.getJtask_name(), savedTask.getText())) {
-                    task.setJedit_date(new Date());
+                if (jiraIssuesCmp.addCommentToJIRAIssue(savedTask.getJTaskName(), savedTask.getText())) {
+                    task.setJEditDate(new Date());
                 }
             }
             if (!task.getPriority().equals(savedTask.getPriority())) {
                 savedTask.setPriority(task.getPriority());
-                if (jiraIssuesCmp.updateJIRAIssuePriority(savedTask.getJtask_name(),
+                if (jiraIssuesCmp.updateJIRAIssuePriority(savedTask.getJTaskName(),
                         TaskPriority.byValue(savedTask.getPriority()).getJiraValue()))
-                    task.setJedit_date(new Date());
+                    task.setJEditDate(new Date());
             }
             taskRepository.save(savedTask);
             if (savedTask.getExist_tf() > 0) {
-                checkTaskFiles(savedTask.getId(), savedTask.getJtask_name());
+                checkTaskFiles(savedTask.getId(), savedTask.getJTaskName());
             }
         }
     }
